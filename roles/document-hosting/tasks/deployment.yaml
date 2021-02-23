@@ -1,0 +1,61 @@
+- name: Manage document-hosting Deployment
+  community.kubernetes.k8s:
+    state: "{{ state }}"
+    namespace: "{{ namespace }}"
+    name: "{{ name }}"
+    api_version: "apps/v1"
+    kind: "Deployment"
+    apply: "yes"
+    definition:
+      metadata:
+        labels:
+          app.kubernetes.io/name: "nginx"
+          app.kubernetes.io/component: "webserver"
+          app.kubernetes.io/instance: "{{ instance }}"
+          app.kubernetes.io/managed-by: "operator"
+        name: "{{ name }}"
+      spec:
+        replicas: "{{ count }}"
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: "nginx"
+            app.kubernetes.io/component: "webserver"
+            app.kubernetes.io/instance: "{{ instance }}"
+        strategy: {}
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: "nginx"
+              app.kubernetes.io/component: "webserver"
+              app.kubernetes.io/instance: "{{ instance }}"
+          spec:
+             containers:
+             - image: "{{ image }}"
+               name: "{{ name }}"
+               ports:
+               - containerPort: 80
+               resources: "{{ resources | default(omit) }}"
+               volumeMounts:
+               - name: nginx-config
+                 mountPath: /etc/nginx/conf.d/nginx-site.conf
+                 subPath: nginx-site.conf
+               - name: docs-nginx-conf
+                 mountPath: /etc/nginx/nginx.conf
+                 subPath: nginx.conf
+               - name: nginx-storage
+                 mountPath: /mnt/storage
+             volumes:
+               - configMap:
+                   name: "{{ site_config }}"
+                   defaultMode: 420
+                 name: nginx-config
+               - configMap:
+                   name: docs-nginx-conf
+                   defaultMode: 420
+                 name: docs-nginx-conf
+               - persistentVolumeClaim:
+                   claimName: "{{ name }}"
+                 name: nginx-storage
+              
+
+

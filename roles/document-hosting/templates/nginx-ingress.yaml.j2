@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app.kubernetes.io/name: "nginx"
+    app.kubernetes.io/component: "webserver"
+    app.kubernetes.io/instance: "{{ instance }}"
+    app.kubernetes.io/managed-by: "operator"
+  annotations:
+    # add an annotation indicating the issuer to use.
+    route.openshift.io/termination: "edge"
+{% if cluster_issuer is defined and cluster_issuer|length %}
+    cert-manager.io/cluster-issuer: "{{ cluster_issuer }}"
+{% endif %}
+  name: "{{ name }}-ingress"
+spec:
+  rules:
+  - host: "{{ fqdn }}"
+    http:
+      paths:
+      - backend:
+          service:
+            name: "{{ name }}"
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+{% if ssl_cert  is defined and ssl_cert|length %}
+  tls:
+  - hosts:
+    - "{{ fqdn }}"
+    secretName: "{{ ssl_cert }}"
+{% endif %}
+

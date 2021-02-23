@@ -1,0 +1,25 @@
+- name: Manage document-hosting PVC
+  community.kubernetes.k8s:
+    state: "{{ state }}"
+    name: "{{ name }}"
+    namespace: "{{ namespace }}"
+    api_version: "v1"
+    kind: "PersistentVolumeClaim"
+    apply: "yes"
+    definition:
+      metadata:
+        labels:
+          app.kubernetes.io/name: "nginx"
+          app.kubernetes.io/component: "webserver"
+          app.kubernetes.io/instance: "{{ instance }}"
+          app.kubernetes.io/managed-by: "operator"
+        name: "{{ name }}"
+      spec:
+        accessModes:
+          - ReadOnlyMany
+        resources:
+          requests:
+            storage: 1Gi
+        volumeName: "{{ pv_name }}"
+
+

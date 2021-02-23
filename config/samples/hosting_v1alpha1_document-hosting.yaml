@@ -1,0 +1,6 @@
+apiVersion: hosting.otc-service.com/v1alpha1
+kind: Document-hosting
+metadata:
+  name: document-hosting-sample
+spec:
+  foo: bar

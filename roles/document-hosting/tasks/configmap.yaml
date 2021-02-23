@@ -1,0 +1,5 @@
+- name: Manage nginx.conf ConfigMap
+  community.kubernetes.k8s:
+    state: "{{ state }}"
+    namespace: "{{ namespace }}"
+    definition: "{{ lookup('template', 'nginx-conf.j2') | from_yaml }}"

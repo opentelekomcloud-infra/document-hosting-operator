@@ -1,0 +1,7 @@
+---
+# tasks file for Document-hosting
+- include_tasks: persistentvolumeclaim.yaml
+- include_tasks: configmap.yaml
+- include_tasks: deployment.yaml
+- include_tasks: service.yaml
+- include_tasks: ingress.yaml

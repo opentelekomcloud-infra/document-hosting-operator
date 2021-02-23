@@ -1,0 +1,28 @@
+- name: Manage document-hosting Service
+  community.kubernetes.k8s:
+    state: "{{ state }}"
+    name: "{{ name }}"
+    namespace: "{{ namespace }}"
+    api_version: "v1"
+    kind: "Service"
+    apply: "yes"
+    definition:
+      metadata:
+        labels:
+          app.kubernetes.io/name: "nginx"
+          app.kubernetes.io/component: "webserver"
+          app.kubernetes.io/instance: "{{ instance }}"
+          app.kubernetes.io/managed-by: "operator"
+        name: "{{ name }}"
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 80
+        selector:
+          app.kubernetes.io/name: "nginx"
+          app.kubernetes.io/component: "webserver"
+          app.kubernetes.io/instance: "{{ instance }}"
+      status:
+        loadBalancer: {}
+

@@ -1,0 +1,22 @@
+---
+# defaults file for Document-hosting
+state: present
+namespace: "{{ ansible_operator_meta.namespace }}"
+name: "docs-{{ ansible_operator_meta.name }}"
+instance: "{{ name }}"
+count: 2
+image: nginx
+resources:
+  limits:
+    cpu: 500m
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+site_config: docs-config
+pv_name: "{{ name }}"
+
+cluster_issuer: ''
+fqdn: docs.eco.tsi-dev.otc-service.com
+ssl_cert: ''
+

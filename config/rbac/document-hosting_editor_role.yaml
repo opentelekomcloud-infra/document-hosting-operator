@@ -1,0 +1,24 @@
+# permissions for end users to edit document-hostings.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: document-hosting-editor-role
+rules:
+- apiGroups:
+  - hosting.otc-service.com
+  resources:
+  - document-hostings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - hosting.otc-service.com
+  resources:
+  - document-hostings/status
+  verbs:
+  - get
