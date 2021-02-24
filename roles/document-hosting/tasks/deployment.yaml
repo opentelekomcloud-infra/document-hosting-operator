@@ -29,12 +29,34 @@
               app.kubernetes.io/component: "webserver"
               app.kubernetes.io/instance: "{{ instance }}"
           spec:
+             affinity:
+               podAntiAffinity:
+                 preferredDuringSchedulingIgnoredDuringExecution:
+                 - weight: 100
+                   podAffinityTerm:
+                     labelSelector:
+                       matchExpressions:
+                       - key: "app.kubernetes.io/instance"
+                         operator: In
+                         values:
+                         - "{{ instance }}"
+                     topologyKey: kubernetes.io/hostname
              containers:
              - image: "{{ image }}"
                name: "{{ name }}"
                ports:
                - containerPort: 80
                resources: "{{ resources | default(omit) }}"
+               readinessProbe:
+                 httpGet:
+                   path: /
+                   scheme: HTTP
+                   port: 80
+               livenessProbe:
+                 httpGet:
+                   path: /
+                   scheme: HTTP
+                   port: 80
                volumeMounts:
                - name: nginx-config
                  mountPath: /etc/nginx/conf.d/nginx-site.conf
